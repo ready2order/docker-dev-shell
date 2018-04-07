@@ -17,7 +17,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: 'echo "TAG: $CIRCLE_TAG"'
-      - run: './build.sh $CIRCLE_tAG --push --login'
+      - run: ./build.sh $CIRCLE_TAG --push --login
 
 workflows:
   version: 2
@@ -35,5 +35,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^\d+\.\d+$/
-
+              only: /.*/
