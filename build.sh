@@ -28,4 +28,6 @@ docker build -t $FULL_TAG .
 if [ "$PUSH" == "--push" ]; then
     echo "Pushing image with tag $FULL_TAG...";
     docker push "$FULL_TAG"
+    docker tag $FULL_TAG $REPO:latest
+    docker push $REPO:latest
 fi

@@ -6,6 +6,7 @@ RUN apt-get update \
     && mkdir -p /usr/share/man/man1 \
     && apt-get update && apt-get install -y \
             sudo build-essential lsb-release \
+            apt-transport-https software-properties-common \
             ssh \
             gnupg2 \
             zsh \
@@ -16,7 +17,6 @@ RUN apt-get update \
             git \
             percona-toolkit \
             redis-tools mysql-client \
-     && apt-get clean \
      && echo "Setting default shell to zsh..." \
      && chsh -s /bin/zsh \
      && echo "Installing composer..." \
@@ -33,6 +33,11 @@ RUN apt-get update \
      && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
      && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
      && apt-get update && apt-get install yarn \
+     && echo "Installing docker..." \
+     && curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - \
+     && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" \
+     && apt-get update -y \
+     && apt-get install -y docker-ce \
      && echo "Installing google cloud tools..." \
      && export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" \
      && echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
