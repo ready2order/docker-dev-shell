@@ -1,12 +1,15 @@
-FROM ready2order/php:7.2.4-cli
+FROM ready2order/php:7.2.7-1
 
 RUN apt-get update \
+    && echo "Installing http stransport..." \
+    && apt-get install -y apt-transport-https \
     && echo "Installing packages..." \
     && echo "mkdir: Needed due to bug: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199" \
     && mkdir -p /usr/share/man/man1 \
     && apt-get update && apt-get install -y \
             sudo build-essential lsb-release \
             ssh \
+            dnsutils iputils-ping \
             gnupg2 \
             zsh \
             zip unzip gzip \
@@ -43,11 +46,4 @@ RUN apt-get update \
      && mv linux-amd64/helm /usr/local/bin/ \
      && rm -r linux-amd64 \
      && echo "Installing aws cli..." \
-     && pip install awscli \
-     && echo "Installing composer..." \
-     && curl -L -sS https://getcomposer.org/installer | php \
-     && mv composer.phar /usr/local/bin/composer \
-     && echo "Installing phpunit" \
-     && wget https://phar.phpunit.de/phpunit-7.phar \
-     && chmod +x phpunit-7.phar \
-     && mv phpunit-7.phar /usr/local/bin/phpunit
+     && pip install awscli
