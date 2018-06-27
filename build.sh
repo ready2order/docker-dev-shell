@@ -1,31 +1,47 @@
 #! /bin/sh
 
 REPO=ready2order/dev-shell
-USAGE="./build.sh VERSION [--push] [--login]"
+USAGE="./build.sh NAME VERSION [--push] [--login]"
+VERSION=0.2
+TAG="$REPO:$VERSION"
+LATEST_TAG="$REPO:latest"
 
 # Ensure that script auto-stops on errors.
-set -exo pipefail
+set -exou pipefail
 
-echo "Arguments: $@"
+echo "$@"
 
-VERSION=$1
-PUSH=$2
-LOGIN=$3
+PUSH=""
+LOGIN=""
 
-if [ -z "$VERSION" ]; then
-    echo $USAGE
-    exit 1
-fi
+for ARG in "${@:1}"
+do
+    echo "CHECKING ARG: $ARG"
+	case "$ARG" in
+		--push)
+			PUSH="true"
+		;;
+		--login)
+			LOGIN="true"
+		;;
+		*)
+			echo "Unknown argument: $ARG"
+			exit 1
+		;;
 
-FULL_TAG="$REPO:$VERSION"
+	esac
+done
 
-if [ "$LOGIN" == "--login" ]; then
+if [ "$LOGIN" == "true" ]; then
     echo $DOCKER_PW | docker login -u $DOCKER_USER  --password-stdin
 fi
 
-docker build -t $FULL_TAG .
+docker build -t $TAG -f Dockerfile .
+docker tag $TAG $LATEST_TAG
 
-if [ "$PUSH" == "--push" ]; then
-    echo "Pushing image with tag $FULL_TAG...";
-    docker push "$FULL_TAG"
+if [ "$PUSH" == "true" ]; then
+    echo "Pushing image with tag $TAG...";
+    docker push $TAG
+    echo "Pushing latest tag $LATEST_TAG...";
+    docker push $LATEST_TAG
 fi
